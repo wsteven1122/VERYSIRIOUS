@@ -193,10 +193,10 @@
         align-items: center;
       }
 
-      /* --- Hero 區塊更新：支援右側擺放形象照 --- */
+      /* Hero 區塊 */
       .hero {
-        padding: 0 5% 0 240px; /* 給左邊播放器留安全邊距 */
-        flex-direction: row; /* 改為橫向排列，讓文字與圖片並排 */
+        padding: 0 5% 0 240px;
+        flex-direction: row;
         justify-content: space-between;
         align-items: center;
         position: relative;
@@ -241,7 +241,7 @@
         text-align: left;
       }
 
-      /* 新增：Hero 右側形象照容器與樣式 */
+      /* Hero 右側形象照容器 */
       .hero-image-wrapper {
         flex: 1;
         display: flex;
@@ -253,7 +253,7 @@
         box-shadow: -8px 8px 0px #000;
         background-color: #fff;
         overflow: hidden;
-        transform: rotate(1deg); /* 帶有一點點貼紙/卡片的微歪街頭感 */
+        transform: rotate(1deg);
         transition: transform 0.3s ease;
       }
 
@@ -264,7 +264,7 @@
       .hero-image-wrapper img {
         width: 100%;
         height: 100%;
-        object-fit: cover; /* 滿版裁切 */
+        object-fit: cover;
       }
 
       .status-bar {
@@ -583,62 +583,135 @@
         color: #555555;
       }
 
-      /* RWD 處理 */
+      /* ==========================================================
+         🔥 關鍵修改：RWD 手機版優化區塊
+         ========================================================== */
       @media (max-width: 900px) {
         body {
           overflow-y: auto;
           overflow-x: hidden;
         }
+
         .main-horizontal-container {
           flex-direction: column;
           width: 100vw;
           height: auto;
         }
-        .page-section {
-          width: 100vw;
-          height: auto;
-          min-height: 100vh;
-          padding: 160px 20px 60px 20px;
-        }
-        /* 手機版將文字與圖片改成上下排列 */
-        .hero {
-          padding: 0 20px;
-          flex-direction: column;
-          gap: 30px;
-          justify-content: center;
-        }
-        .hero-image-wrapper {
+
+        /* 讓頂部 Header 固定，但減少內距避免太重 */
+        header {
+          padding: 16px 20px;
           width: 100%;
-          max-width: 320px;
-          height: 380px;
         }
+
+        /* 核心修正：將操控選單與播放器改為「絕對/靜態排列」，推擠內容不重疊 */
         .sidebar-controls {
-          position: fixed;
-          top: 75px;
-          left: 20px;
+          position: relative;
+          top: 0;
+          left: 0;
+          width: 100%;
+          padding: 80px 20px 10px 20px; /* 上方留 80px 給 Header */
+          display: flex;
           flex-direction: column;
-          width: calc(100% - 40px);
-          gap: 10px;
+          gap: 16px;
+          z-index: 101;
+          backdrop-filter: none;
         }
+
         .cassette-player {
           width: 100%;
           transform: none;
+          box-shadow: -2px 3px 0px #000;
         }
+
         .tag-menu {
           flex-direction: row;
-          overflow-x: auto;
-          padding-bottom: 5px;
+          flex-wrap: wrap; /* 容許標籤在小螢幕自動換行 */
+          gap: 10px;
           width: 100%;
         }
+
+        .sticker-tag {
+          flex: 1 1 calc(50% - 10px); /* 兩個一排均分 */
+          text-align: center;
+          font-size: 12px;
+          padding: 10px;
+          transform: none !important;
+          box-shadow: -2px 2px 0px rgba(0, 0, 0, 0.85);
+        }
+
+        /* 讓每個 Page 區塊不要被上方播放器吃掉空間 */
+        .page-section {
+          width: 100vw;
+          height: auto;
+          min-height: auto;
+          padding: 40px 20px;
+        }
+
+        /* Hero 區塊上下有條理地垂直排列 */
+        .hero {
+          padding: 20px;
+          flex-direction: column;
+          gap: 30px;
+          justify-content: flex-start;
+          align-items: flex-start;
+        }
+
+        .hero-content-wrapper {
+          max-width: 100%;
+        }
+
+        .hero-title {
+          font-size: 2.8rem; /* 稍微縮小字體符合手機螢幕 */
+          white-space: normal; /* 允許折行 */
+        }
+
+        /* 修正：限制形象照在手機版的大小與比例 */
+        .hero-image-wrapper {
+          width: 100%;
+          max-width: 100%;
+          height: auto;
+          aspect-ratio: 4 / 5; /* 保持好看的直幅比例 */
+          margin-top: 10px;
+          transform: rotate(1deg) !important; /* 保持微歪的 Y2K 街頭感 */
+        }
+
         .product-grid {
           grid-template-columns: repeat(2, 1fr);
+          gap: 16px;
         }
+
         .status-bar {
-          display: none;
+          position: relative;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          margin-top: 20px;
+          flex-direction: column;
+          gap: 6px;
         }
+
         .id-card {
           width: 100%;
           max-width: 350px;
+          height: auto;
+          flex-direction: column;
+          align-items: center;
+          padding: 30px 16px 16px 16px;
+        }
+        .id-avatar {
+          width: 120px;
+          height: 140px;
+        }
+        .id-details {
+          width: 100%;
+          text-align: center;
+        }
+        .id-name {
+          font-size: 26px;
+        }
+        .id-barcode {
+          height: 35px;
         }
       }
     </style>
@@ -698,7 +771,7 @@
         </div>
 
         <div class="hero-image-wrapper">
-          <img src="img/hero-profile.jpg" alt="Profile Image" />
+          <img src="./img/hero-profile.jpg" alt="Profile Image" />
         </div>
 
         <div class="status-bar">
@@ -935,6 +1008,7 @@
           });
         } else {
           const sections = document.querySelectorAll(".page-section");
+          // 加上一些 offset 避免滾動位置不精準
           sections[index].scrollIntoView({ behavior: "smooth" });
         }
       }
@@ -947,14 +1021,24 @@
         if (window.innerWidth > 900) {
           currentIndex = Math.round(window.scrollX / window.innerWidth);
         } else {
-          currentIndex = Math.round(window.scrollY / window.innerHeight);
+          // 手機版根據各區塊相對於視窗的位置來判定當前索引
+          const sections = document.querySelectorAll(".page-section");
+          sections.forEach((sec, idx) => {
+            const rect = sec.getBoundingClientRect();
+            if (
+              rect.top <= window.innerHeight / 2 &&
+              rect.bottom >= window.innerHeight / 2
+            ) {
+              currentIndex = idx;
+            }
+          });
         }
 
         tags.forEach((tag, idx) => {
           if (idx === currentIndex) {
             tag.classList.add("active");
           } else {
-            tag.classList.remove("remove");
+            tag.classList.remove("active");
           }
         });
       });
