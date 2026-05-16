@@ -1,0 +1,1009 @@
+<!doctype html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NOT CUTE ANYMORE // ARCHIVE</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* 全域設定 */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        cursor: none !important;
+      }
+
+      body {
+        background-color: #f7f7f7;
+        color: #2c2c2c;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        letter-spacing: -0.02em;
+        overflow-y: hidden;
+        overflow-x: auto;
+      }
+
+      #custom-cursor {
+        width: 16px;
+        height: 16px;
+        background-color: rgba(0, 0, 0, 0.15);
+        border-radius: 50%;
+        position: fixed;
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-50%, -50%);
+        backdrop-filter: blur(2px);
+        transition:
+          transform 0.15s ease-out,
+          background-color 0.3s;
+      }
+
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        padding: 24px 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 100;
+        backdrop-filter: blur(12px);
+        background-color: rgba(247, 247, 247, 0.7);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      }
+
+      .logo {
+        font-size: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      /* 側邊操控群組 */
+      .sidebar-controls {
+        position: fixed;
+        left: 40px;
+        top: 120px;
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        z-index: 101;
+      }
+
+      /* 磁帶音樂播放器 */
+      .cassette-player {
+        background-color: #ff4500;
+        border: 3px solid #000;
+        padding: 10px;
+        width: 160px;
+        box-shadow: -3px 4px 0px #000;
+        font-family: "VT323", monospace;
+        transform: rotate(1deg);
+      }
+      .player-screen {
+        background-color: #000;
+        color: #adff2f;
+        padding: 4px;
+        font-size: 14px;
+        text-align: center;
+        margin-bottom: 8px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        border-radius: 2px;
+      }
+      .player-btns {
+        display: flex;
+        justify-content: space-between;
+        gap: 4px;
+      }
+      .play-btn {
+        background: #fff;
+        border: 2px solid #000;
+        font-family: "VT323", monospace;
+        font-size: 12px;
+        padding: 2px 6px;
+        flex-grow: 1;
+        box-shadow: -1px 2px 0px #000;
+        font-weight: bold;
+      }
+      .play-btn:active {
+        box-shadow: 0px 0px 0px #000;
+        transform: translate(-1px, 2px);
+      }
+
+      /* 多巴胺標籤目錄 */
+      .tag-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .sticker-tag {
+        display: inline-block;
+        padding: 8px 16px;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        text-decoration: none;
+        color: #000;
+        position: relative;
+        box-shadow: -2px 3px 0px rgba(0, 0, 0, 0.85);
+        transform: rotate(-2deg);
+        transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transform-origin: right bottom;
+        border: 1px solid #000;
+      }
+
+      .sticker-tag:nth-child(1) {
+        background-color: #adff2f;
+      }
+      .sticker-tag:nth-child(2) {
+        background-color: #ff00ff;
+        color: #fff;
+      }
+      .sticker-tag:nth-child(3) {
+        background-color: #00ffff;
+      }
+      .sticker-tag:nth-child(4) {
+        background-color: #ffeb3b;
+      }
+
+      .sticker-tag::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background-image: linear-gradient(to bottom, #000 50%, transparent 50%);
+        background-size: 1px 6px;
+      }
+
+      .sticker-tag:hover {
+        transform: rotate(-6deg) translate(4px, -4px);
+        box-shadow: -6px 8px 12px rgba(0, 0, 0, 0.15);
+        filter: brightness(1.1);
+      }
+
+      .sticker-tag.active {
+        transform: rotate(0deg) translate(-2px, 2px);
+        box-shadow: -1px 1px 0px rgba(0, 0, 0, 0.9);
+      }
+
+      /* 橫向主容器 */
+      .main-horizontal-container {
+        display: flex;
+        width: 400vw;
+        height: 100vh;
+        scroll-behavior: smooth;
+      }
+
+      .page-section {
+        width: 100vw;
+        height: 100vh;
+        flex-shrink: 0;
+        padding-top: 100px;
+        display: flex;
+        align-items: center;
+      }
+
+      /* --- Hero 區塊更新：支援右側擺放形象照 --- */
+      .hero {
+        padding: 0 5% 0 240px; /* 給左邊播放器留安全邊距 */
+        flex-direction: row; /* 改為橫向排列，讓文字與圖片並排 */
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        gap: 60px;
+      }
+
+      .hero-content-wrapper {
+        flex: 1;
+        max-width: 500px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .hero-meta {
+        font-size: 11px;
+        color: #999999;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        margin-bottom: 14px;
+        white-space: nowrap;
+      }
+
+      .hero-title {
+        font-size: clamp(3rem, 6vw, 5rem);
+        font-weight: 700;
+        line-height: 1;
+        text-transform: uppercase;
+        margin-bottom: 24px;
+        color: #1a1a1a;
+        white-space: nowrap;
+      }
+
+      .hero-desc {
+        font-size: 14px;
+        color: #555555;
+        max-width: 460px;
+        line-height: 1.7;
+        font-weight: 400;
+        word-break: break-all;
+        text-align: left;
+      }
+
+      /* 新增：Hero 右側形象照容器與樣式 */
+      .hero-image-wrapper {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        max-width: 450px;
+        height: 65vh;
+        border: 4px solid #000;
+        box-shadow: -8px 8px 0px #000;
+        background-color: #fff;
+        overflow: hidden;
+        transform: rotate(1deg); /* 帶有一點點貼紙/卡片的微歪街頭感 */
+        transition: transform 0.3s ease;
+      }
+
+      .hero-image-wrapper:hover {
+        transform: rotate(0deg) scale(1.02);
+      }
+
+      .hero-image-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* 滿版裁切 */
+      }
+
+      .status-bar {
+        position: absolute;
+        bottom: 40px;
+        left: 240px;
+        right: 5%;
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        color: #b0b0b0;
+        font-family: monospace;
+      }
+      .status-bar span {
+        color: #666666;
+      }
+
+      /* 會員卡特區 */
+      .card-section {
+        background-color: #dfdcd4;
+        background-image: radial-gradient(#c5c2b9 15%, transparent 15%);
+        background-size: 16px 16px;
+        justify-content: center;
+        border-right: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .retro-card-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .card-label-top {
+        font-family: "VT323", monospace;
+        font-size: 24px;
+        color: #333;
+        text-transform: uppercase;
+      }
+
+      .id-card {
+        width: 380px;
+        height: 230px;
+        background-color: #98fb98;
+        border: 4px solid #000;
+        box-shadow: -8px 8px 0px #000;
+        border-radius: 12px;
+        padding: 24px 16px 16px 16px;
+        position: relative;
+        display: flex;
+        gap: 15px;
+        overflow: hidden;
+        transform: rotate(-1deg);
+      }
+
+      .id-card::before {
+        content: "GOLF WANG ARCHIVE // ID CARD";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #000;
+        color: #fff;
+        font-family: "VT323", monospace;
+        font-size: 11px;
+        padding: 2px 16px;
+        letter-spacing: 1px;
+      }
+
+      .id-avatar {
+        width: 100px;
+        height: 120px;
+        border: 3px solid #000;
+        background-color: #fff;
+        margin-top: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        box-shadow: -3px 3px 0px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+      }
+
+      .id-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .id-details {
+        margin-top: 15px;
+        font-family: "VT323", monospace;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        flex-grow: 1;
+      }
+
+      .id-name {
+        font-size: 32px;
+        line-height: 1;
+        font-weight: bold;
+        color: #000;
+        text-transform: uppercase;
+        border-bottom: 2px dashed #000;
+        padding-bottom: 4px;
+      }
+
+      .id-info-row {
+        font-size: 16px;
+        color: #222;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .id-barcode {
+        width: 100%;
+        height: 25px;
+        background: linear-gradient(
+          90deg,
+          #000 5%,
+          transparent 5%,
+          #000 10%,
+          #000 15%,
+          transparent 15%,
+          #000 25%,
+          transparent 25%,
+          #000 30%,
+          #000 45%,
+          transparent 45%,
+          #000 55%,
+          transparent 55%,
+          #000 65%,
+          #000 80%,
+          transparent 80%,
+          #000 85%,
+          #000 100%
+        );
+        background-size: 30px 100%;
+        margin-top: 5px;
+      }
+
+      .card-stamp {
+        position: absolute;
+        bottom: 10px;
+        right: 15px;
+        background-color: #ff69b4;
+        color: #fff;
+        font-size: 10px;
+        padding: 2px 6px;
+        font-weight: bold;
+        border: 2px solid #000;
+        transform: rotate(-15deg);
+        box-shadow: -2px 2px 0px #000;
+      }
+
+      /* Log 區塊 */
+      .setlog-section {
+        background: rgba(255, 255, 255, 0.3);
+        border-right: 1px solid rgba(0, 0, 0, 0.04);
+        justify-content: center;
+      }
+      .setlog-container {
+        width: 100%;
+        max-width: 550px;
+        padding: 0 20px;
+      }
+      .setlog-header {
+        font-size: 11px;
+        font-weight: 600;
+        color: #888888;
+        margin-bottom: 16px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      .setlog-input-box {
+        background: rgba(255, 255, 255, 0.6);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 20px;
+      }
+      .setlog-textarea {
+        width: 100%;
+        height: 50px;
+        border: none;
+        outline: none;
+        resize: none;
+        font-size: 13px;
+        background: transparent;
+        color: #2c2c2c;
+      }
+      .btn-log {
+        background: rgba(0, 0, 0, 0.05);
+        color: #555555;
+        border: none;
+        padding: 5px 14px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      .btn-log:hover {
+        background: #1a1a1a;
+        color: #ffffff;
+      }
+      .log-feed {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-height: 40vh;
+        overflow-y: auto;
+      }
+      .log-item {
+        background: rgba(255, 255, 255, 0.5);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        border-radius: 10px;
+        padding: 12px 16px;
+        font-size: 13px;
+        line-height: 1.5;
+        color: #444444;
+      }
+      .log-time {
+        font-size: 9px;
+        color: #b0b0b0;
+        margin-top: 6px;
+        font-family: monospace;
+      }
+
+      /* 商品區塊 */
+      .section-products {
+        background-color: #f7f7f7;
+        padding: 0 8%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .products-inner {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 40px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        padding-bottom: 12px;
+      }
+      .section-title {
+        font-size: 18px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .product-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+      }
+      .product-image-holder {
+        width: 100%;
+        aspect-ratio: 1/1;
+        background-color: rgba(255, 255, 255, 0.4);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        border-radius: 8px;
+        margin-bottom: 14px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .product-image-holder img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .product-card:hover .product-image-holder {
+        border-color: rgba(0, 0, 0, 0.2);
+        background-color: #ffffff;
+      }
+      .product-badge {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background-color: rgba(0, 0, 0, 0.05);
+        color: #666666;
+        font-size: 9px;
+        font-weight: 600;
+        padding: 3px 6px;
+        text-transform: uppercase;
+        border-radius: 4px;
+        z-index: 1;
+      }
+      .product-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      .product-name {
+        font-size: 13px;
+        font-weight: 600;
+        color: #2c2c2c;
+      }
+      .product-category {
+        font-size: 11px;
+        color: #999999;
+        margin-top: 3px;
+      }
+      .product-price {
+        font-size: 13px;
+        font-weight: 600;
+        color: #555555;
+      }
+
+      /* RWD 處理 */
+      @media (max-width: 900px) {
+        body {
+          overflow-y: auto;
+          overflow-x: hidden;
+        }
+        .main-horizontal-container {
+          flex-direction: column;
+          width: 100vw;
+          height: auto;
+        }
+        .page-section {
+          width: 100vw;
+          height: auto;
+          min-height: 100vh;
+          padding: 160px 20px 60px 20px;
+        }
+        /* 手機版將文字與圖片改成上下排列 */
+        .hero {
+          padding: 0 20px;
+          flex-direction: column;
+          gap: 30px;
+          justify-content: center;
+        }
+        .hero-image-wrapper {
+          width: 100%;
+          max-width: 320px;
+          height: 380px;
+        }
+        .sidebar-controls {
+          position: fixed;
+          top: 75px;
+          left: 20px;
+          flex-direction: column;
+          width: calc(100% - 40px);
+          gap: 10px;
+        }
+        .cassette-player {
+          width: 100%;
+          transform: none;
+        }
+        .tag-menu {
+          flex-direction: row;
+          overflow-x: auto;
+          padding-bottom: 5px;
+          width: 100%;
+        }
+        .product-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .status-bar {
+          display: none;
+        }
+        .id-card {
+          width: 100%;
+          max-width: 350px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="custom-cursor"></div>
+
+    <header>
+      <div class="logo">VerySirious</div>
+    </header>
+
+    <audio
+      id="audioPlayer"
+      src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+      loop
+    ></audio>
+
+    <div class="sidebar-controls">
+      <div class="cassette-player">
+        <div class="player-screen" id="trackName">TWICE - ATM</div>
+        <div class="player-btns">
+          <button class="play-btn" onclick="prevTrack()">◀</button>
+          <button class="play-btn" id="playPauseBtn" onclick="togglePlay()">
+            PLAY
+          </button>
+          <button class="play-btn" onclick="nextTrack()">▶</button>
+        </div>
+      </div>
+
+      <nav class="tag-menu">
+        <a
+          href="#hero-sec"
+          class="sticker-tag active"
+          onclick="scrollToSection(0)"
+          >Index</a
+        >
+        <a href="#card-sec" class="sticker-tag" onclick="scrollToSection(1)"
+          >VIP Card</a
+        >
+        <a href="#log-sec" class="sticker-tag" onclick="scrollToSection(2)"
+          >Log</a
+        >
+        <a href="#object-sec" class="sticker-tag" onclick="scrollToSection(3)"
+          >Objects</a
+        >
+      </nav>
+    </div>
+
+    <main class="main-horizontal-container" id="mainContainer">
+      <section id="hero-sec" class="page-section hero">
+        <div class="hero-content-wrapper">
+          <div class="hero-meta">Drop 01 / Anti-Sweet Archive</div>
+          <h1 class="hero-title">TooShy<br />ToLook</h1>
+          <p class="hero-desc">
+            以極簡的灰白語彙，解構周邊物件的定義。這裏沒有多餘的色彩，只有實體本身與妳的記憶片段。
+          </p>
+        </div>
+
+        <div class="hero-image-wrapper">
+          <img src="img/hero-profile.jpg" alt="Profile Image" />
+        </div>
+
+        <div class="status-bar">
+          <div>IP // <span id="user-ip">LOADING...</span></div>
+          <div>STATUS // <span style="color: #888888">STANDBY</span></div>
+          <div>TIME // <span id="live-time">00:00:00</span></div>
+        </div>
+      </section>
+
+      <section id="card-sec" class="page-section card-section">
+        <div class="retro-card-container">
+          <div class="card-label-top">✧ CHOOSE YOUR CHARACTER ✧</div>
+
+          <div class="id-card">
+            <div class="id-avatar">
+              <img src="images/avatar.jpg" alt="Avatar" />
+            </div>
+            <div class="id-details">
+              <div class="id-name">SIRIOUS CLUB</div>
+              <div class="id-info-row">
+                <div>NO. 2026-9999</div>
+                <div>RANK // ARCHIVE VIP</div>
+                <div>EXP // HVNLY LEVEL</div>
+              </div>
+              <div class="id-barcode"></div>
+            </div>
+            <div class="card-stamp">VERIFIED</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="log-sec" class="page-section setlog-section">
+        <div class="setlog-container">
+          <div class="setlog-header">Log Archive // 隨手碎念</div>
+
+          <div class="setlog-input-box">
+            <textarea
+              class="setlog-textarea"
+              id="logInput"
+              placeholder="輸入一些無關緊要的記憶..."
+            ></textarea>
+            <div style="display: flex; justify-content: flex-end">
+              <button class="btn-log" onclick="addLog()">Log</button>
+            </div>
+          </div>
+
+          <div class="log-feed" id="logFeed">
+            <div class="log-item">
+              把新買的盲盒放在桌上，灰色調的包裝擺在桌角異常和諧。
+              <div class="log-time">16:12:05 // LOCAL</div>
+            </div>
+            <div class="log-item">
+              這款亞克力吊飾在自然光下折射出的透明度很乾淨。
+              <div class="log-time">14:30:22 // LOCAL</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="object-sec" class="page-section section-products">
+        <div class="products-inner">
+          <div class="section-header">
+            <div class="section-title">Objects // 灰調物件</div>
+            <div style="font-size: 11px; color: #999999">[04 ITEMS]</div>
+          </div>
+
+          <div class="product-grid">
+            <div class="product-card">
+              <div class="product-image-holder">
+                <div class="product-badge">Toy</div>
+                <img src="images/product1.jpg" alt="Blind Box" />
+              </div>
+              <div class="product-info">
+                <div>
+                  <h2 class="product-name">反差系列微縮盲盒</h2>
+                  <p class="product-category">微霧面質感 / 共 6 款</p>
+                </div>
+                <div class="product-price">$380</div>
+              </div>
+            </div>
+
+            <div class="product-card">
+              <div class="product-image-holder">
+                <div class="product-badge">Case</div>
+                <img src="images/product2.jpg" alt="Phone Case" />
+              </div>
+              <div class="product-info">
+                <div>
+                  <h2 class="product-name">微霧半透明手機殼</h2>
+                  <p class="product-category">防摔亞克力 / 磨砂邊緣</p>
+                </div>
+                <div class="product-price">$650</div>
+              </div>
+            </div>
+
+            <div class="product-card">
+              <div class="product-image-holder">
+                <div class="product-badge">Charm</div>
+                <img src="images/product3.jpg" alt="Keyring" />
+              </div>
+              <div class="product-info">
+                <div>
+                  <h2 class="product-name">極簡不規則 LOGO 鑰匙圈</h2>
+                  <p class="product-category">半透明灰 / 霧銀金屬扣</p>
+                </div>
+                <div class="product-price">$290</div>
+              </div>
+            </div>
+
+            <div class="product-card">
+              <div class="product-image-holder">
+                <div class="product-badge">Apparel</div>
+                <img src="images/product4.jpg" alt="Long Sleeve" />
+              </div>
+              <div class="product-info">
+                <div>
+                  <h2 class="product-name">Above Osz Long Sleeve</h2>
+                  <p class="product-category">落肩重磅灰棉</p>
+                </div>
+                <div class="product-price">$1,480</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      // 音樂播放清單
+      const trackList = [
+        {
+          name: "TWICE - ATM",
+          src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+        },
+        {
+          name: "TWICE - Midnight Sun",
+          src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+        },
+        {
+          name: "TWICE - HVNLY",
+          src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+        },
+      ];
+
+      let currentTrackIdx = 0;
+      const audio = document.getElementById("audioPlayer");
+      const playPauseBtn = document.getElementById("playPauseBtn");
+
+      function loadTrack(idx) {
+        audio.src = trackList[idx].src;
+        document.getElementById("trackName").innerText = trackList[idx].name;
+      }
+
+      function togglePlay() {
+        if (audio.paused) {
+          audio
+            .play()
+            .then(() => {
+              playPauseBtn.innerText = "PAUSE";
+              playPauseBtn.style.backgroundColor = "#adff2f";
+            })
+            .catch((err) => console.log("瀏覽器阻擋自動播放：", err));
+        } else {
+          audio.pause();
+          playPauseBtn.innerText = "PLAY";
+          playPauseBtn.style.backgroundColor = "#fff";
+        }
+      }
+
+      function nextTrack() {
+        currentTrackIdx = (currentTrackIdx + 1) % trackList.length;
+        loadTrack(currentTrackIdx);
+        audio.play();
+        playPauseBtn.innerText = "PAUSE";
+        playPauseBtn.style.backgroundColor = "#adff2f";
+      }
+
+      function prevTrack() {
+        currentTrackIdx =
+          (currentTrackIdx - 1 + trackList.length) % trackList.length;
+        loadTrack(currentTrackIdx);
+        audio.play();
+        playPauseBtn.innerText = "PAUSE";
+        playPauseBtn.style.backgroundColor = "#adff2f";
+      }
+
+      loadTrack(currentTrackIdx);
+
+      // 滑鼠跟隨
+      const cursor = document.getElementById("custom-cursor");
+      document.addEventListener("mousemove", (e) => {
+        cursor.style.left = e.clientX + "px";
+        cursor.style.top = e.clientY + "px";
+      });
+
+      function bindCursorEvents() {
+        const interactiveEls = document.querySelectorAll(
+          "a, button, .product-card, textarea, .id-card, .hero-image-wrapper",
+        );
+        interactiveEls.forEach((el) => {
+          el.addEventListener("mouseenter", () => {
+            cursor.style.transform = "translate(-50%, -50%) scale(2.5)";
+            cursor.style.backgroundColor = "rgba(0, 0, 0, 0.08)";
+          });
+          el.addEventListener("mouseleave", () => {
+            cursor.style.transform = "translate(-50%, -50%) scale(1)";
+            cursor.style.backgroundColor = "rgba(0, 0, 0, 0.15)";
+          });
+        });
+      }
+      bindCursorEvents();
+
+      // 桌機版滑鼠滾輪轉換左右滑動
+      window.addEventListener(
+        "wheel",
+        (e) => {
+          if (window.innerWidth > 900) {
+            e.preventDefault();
+            window.scrollTo({
+              left: window.scrollX + e.deltaY,
+              behavior: "auto",
+            });
+          }
+        },
+        { passive: false },
+      );
+
+      // 點擊目錄標籤切換
+      function scrollToSection(index) {
+        if (window.innerWidth > 900) {
+          window.scrollTo({
+            left: window.innerWidth * index,
+            behavior: "smooth",
+          });
+        } else {
+          const sections = document.querySelectorAll(".page-section");
+          sections[index].scrollIntoView({ behavior: "smooth" });
+        }
+      }
+
+      // 監聽滾動同步更新標籤
+      window.addEventListener("scroll", () => {
+        const tags = document.querySelectorAll(".sticker-tag");
+        let currentIndex = 0;
+
+        if (window.innerWidth > 900) {
+          currentIndex = Math.round(window.scrollX / window.innerWidth);
+        } else {
+          currentIndex = Math.round(window.scrollY / window.innerHeight);
+        }
+
+        tags.forEach((tag, idx) => {
+          if (idx === currentIndex) {
+            tag.classList.add("active");
+          } else {
+            tag.classList.remove("remove");
+          }
+        });
+      });
+
+      // Log 發布
+      function addLog() {
+        const input = document.getElementById("logInput");
+        const feed = document.getElementById("logFeed");
+        if (input.value.trim() === "") return;
+
+        const now = new Date();
+        const timeStr = now.toTimeString().split(" ")[0];
+
+        const newLog = document.createElement("div");
+        newLog.className = "log-item";
+        newLog.innerHTML = `
+            ${input.value}
+            <div class="log-time">${timeStr} // LOCAL</div>
+        `;
+
+        feed.insertBefore(newLog, feed.firstChild);
+        input.value = "";
+        bindCursorEvents();
+      }
+
+      // 狀態列資訊
+      function getIp() {
+        fetch("https://api.ipify.org?format=json")
+          .then((res) => res.json())
+          .then((data) => {
+            document.getElementById("user-ip").innerText = data.ip;
+          })
+          .catch(() => {
+            document.getElementById("user-ip").innerText = "127.0.0.1";
+          });
+      }
+
+      function updateTime() {
+        const now = new Date();
+        document.getElementById("live-time").innerText = now
+          .toTimeString()
+          .split(" ")[0];
+      }
+
+      window.onload = function () {
+        getIp();
+        updateTime();
+        setInterval(updateTime, 1000);
+      };
+    </script>
+  </body>
+</html>
