@@ -282,144 +282,17 @@
         color: #666666;
       }
 
-      /* 會員卡特區 */
+      /* ==========================================================
+         🔥 修改：第二頁滿版插畫設定 (使用 contain 完整呈現不裁切)
+         ========================================================== */
       .card-section {
-        background-color: #dfdcd4;
-        background-image: radial-gradient(#c5c2b9 15%, transparent 15%);
-        background-size: 16px 16px;
-        justify-content: center;
+        background-color: #ffffff; /* 圖檔是白底，搭配純白背景一體感更強 */
+        background-image: url("./img/未命名-1-01.jpg");
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
         border-right: 1px solid rgba(0, 0, 0, 0.1);
-      }
-
-      .retro-card-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-      }
-
-      .card-label-top {
-        font-family: "VT323", monospace;
-        font-size: 24px;
-        color: #333;
-        text-transform: uppercase;
-      }
-
-      .id-card {
-        width: 380px;
-        height: 230px;
-        background-color: #98fb98;
-        border: 4px solid #000;
-        box-shadow: -8px 8px 0px #000;
-        border-radius: 12px;
-        padding: 24px 16px 16px 16px;
-        position: relative;
-        display: flex;
-        gap: 15px;
-        overflow: hidden;
-        transform: rotate(-1deg);
-      }
-
-      .id-card::before {
-        content: "GOLF WANG ARCHIVE // ID CARD";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        background-color: #000;
-        color: #fff;
-        font-family: "VT323", monospace;
-        font-size: 11px;
-        padding: 2px 16px;
-        letter-spacing: 1px;
-      }
-
-      .id-avatar {
-        width: 100px;
-        height: 120px;
-        border: 3px solid #000;
-        background-color: #fff;
-        margin-top: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        box-shadow: -3px 3px 0px rgba(0, 0, 0, 0.2);
-        overflow: hidden;
-      }
-
-      .id-avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .id-details {
-        margin-top: 15px;
-        font-family: "VT323", monospace;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        flex-grow: 1;
-      }
-
-      .id-name {
-        font-size: 32px;
-        line-height: 1;
-        font-weight: bold;
-        color: #000;
-        text-transform: uppercase;
-        border-bottom: 2px dashed #000;
-        padding-bottom: 4px;
-      }
-
-      .id-info-row {
-        font-size: 16px;
-        color: #222;
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-      }
-
-      .id-barcode {
-        width: 100%;
-        height: 25px;
-        background: linear-gradient(
-          90deg,
-          #000 5%,
-          transparent 5%,
-          #000 10%,
-          #000 15%,
-          transparent 15%,
-          #000 25%,
-          transparent 25%,
-          #000 30%,
-          #000 45%,
-          transparent 45%,
-          #000 55%,
-          transparent 55%,
-          #000 65%,
-          #000 80%,
-          transparent 80%,
-          #000 85%,
-          #000 100%
-        );
-        background-size: 30px 100%;
-        margin-top: 5px;
-      }
-
-      .card-stamp {
-        position: absolute;
-        bottom: 10px;
-        right: 15px;
-        background-color: #ff69b4;
-        color: #fff;
-        font-size: 10px;
-        padding: 2px 6px;
-        font-weight: bold;
-        border: 2px solid #000;
-        transform: rotate(-15deg);
-        box-shadow: -2px 2px 0px #000;
+        padding: 0;
       }
 
       /* Log 區塊 */
@@ -583,9 +456,7 @@
         color: #555555;
       }
 
-      /* ==========================================================
-         🔥 關鍵修改：RWD 手機版優化區塊
-         ========================================================== */
+      /* RWD 手機版優化區塊 */
       @media (max-width: 900px) {
         body {
           overflow-y: auto;
@@ -598,19 +469,17 @@
           height: auto;
         }
 
-        /* 讓頂部 Header 固定，但減少內距避免太重 */
         header {
           padding: 16px 20px;
           width: 100%;
         }
 
-        /* 核心修正：將操控選單與播放器改為「絕對/靜態排列」，推擠內容不重疊 */
         .sidebar-controls {
           position: relative;
           top: 0;
           left: 0;
           width: 100%;
-          padding: 80px 20px 10px 20px; /* 上方留 80px 給 Header */
+          padding: 80px 20px 10px 20px;
           display: flex;
           flex-direction: column;
           gap: 16px;
@@ -626,13 +495,13 @@
 
         .tag-menu {
           flex-direction: row;
-          flex-wrap: wrap; /* 容許標籤在小螢幕自動換行 */
+          flex-wrap: wrap;
           gap: 10px;
           width: 100%;
         }
 
         .sticker-tag {
-          flex: 1 1 calc(50% - 10px); /* 兩個一排均分 */
+          flex: 1 1 calc(50% - 10px);
           text-align: center;
           font-size: 12px;
           padding: 10px;
@@ -640,7 +509,6 @@
           box-shadow: -2px 2px 0px rgba(0, 0, 0, 0.85);
         }
 
-        /* 讓每個 Page 區塊不要被上方播放器吃掉空間 */
         .page-section {
           width: 100vw;
           height: auto;
@@ -648,7 +516,15 @@
           padding: 40px 20px;
         }
 
-        /* Hero 區塊上下有條理地垂直排列 */
+        /* 手機版將背景圖改為寬度滿版，並給予固定高寬比以防圖案被完全壓扁 */
+        .card-section {
+          height: auto;
+          min-height: auto;
+          aspect-ratio: 4 / 3;
+          background-size: contain;
+          padding: 0;
+        }
+
         .hero {
           padding: 20px;
           flex-direction: column;
@@ -662,18 +538,17 @@
         }
 
         .hero-title {
-          font-size: 2.8rem; /* 稍微縮小字體符合手機螢幕 */
-          white-space: normal; /* 允許折行 */
+          font-size: 2.8rem;
+          white-space: normal;
         }
 
-        /* 修正：限制形象照在手機版的大小與比例 */
         .hero-image-wrapper {
           width: 100%;
           max-width: 100%;
           height: auto;
-          aspect-ratio: 4 / 5; /* 保持好看的直幅比例 */
+          aspect-ratio: 4 / 5;
           margin-top: 10px;
-          transform: rotate(1deg) !important; /* 保持微歪的 Y2K 街頭感 */
+          transform: rotate(1deg) !important;
         }
 
         .product-grid {
@@ -689,29 +564,6 @@
           margin-top: 20px;
           flex-direction: column;
           gap: 6px;
-        }
-
-        .id-card {
-          width: 100%;
-          max-width: 350px;
-          height: auto;
-          flex-direction: column;
-          align-items: center;
-          padding: 30px 16px 16px 16px;
-        }
-        .id-avatar {
-          width: 120px;
-          height: 140px;
-        }
-        .id-details {
-          width: 100%;
-          text-align: center;
-        }
-        .id-name {
-          font-size: 26px;
-        }
-        .id-barcode {
-          height: 35px;
         }
       }
     </style>
@@ -749,7 +601,7 @@
           >Index</a
         >
         <a href="#card-sec" class="sticker-tag" onclick="scrollToSection(1)"
-          >VIP Card</a
+          >Graphics</a
         >
         <a href="#log-sec" class="sticker-tag" onclick="scrollToSection(2)"
           >Log</a
@@ -766,12 +618,12 @@
           <div class="hero-meta">Drop 01 / Anti-Sweet Archive</div>
           <h1 class="hero-title">TooShy<br />ToLook</h1>
           <p class="hero-desc">
-            以極簡的灰白語彙，解構周邊物件的定義。這裏沒有多餘的色彩，只有實體本身與妳的記憶片段。
+            以極簡的灰白語彙，解構周邊物件的定義。這裏沒有多餘的色彩，只有鼠標。
           </p>
         </div>
 
         <div class="hero-image-wrapper">
-          <img src="./img/hero-profile.jpg" alt="Profile Image" />
+          <img src="./img/未命名-1-02.jpg" alt="Profile Image" />
         </div>
 
         <div class="status-bar">
@@ -781,27 +633,7 @@
         </div>
       </section>
 
-      <section id="card-sec" class="page-section card-section">
-        <div class="retro-card-container">
-          <div class="card-label-top">✧ CHOOSE YOUR CHARACTER ✧</div>
-
-          <div class="id-card">
-            <div class="id-avatar">
-              <img src="images/avatar.jpg" alt="Avatar" />
-            </div>
-            <div class="id-details">
-              <div class="id-name">SIRIOUS CLUB</div>
-              <div class="id-info-row">
-                <div>NO. 2026-9999</div>
-                <div>RANK // ARCHIVE VIP</div>
-                <div>EXP // HVNLY LEVEL</div>
-              </div>
-              <div class="id-barcode"></div>
-            </div>
-            <div class="card-stamp">VERIFIED</div>
-          </div>
-        </div>
-      </section>
+      <section id="card-sec" class="page-section card-section"></section>
 
       <section id="log-sec" class="page-section setlog-section">
         <div class="setlog-container">
@@ -969,7 +801,7 @@
 
       function bindCursorEvents() {
         const interactiveEls = document.querySelectorAll(
-          "a, button, .product-card, textarea, .id-card, .hero-image-wrapper",
+          "a, button, .product-card, textarea, .hero-image-wrapper",
         );
         interactiveEls.forEach((el) => {
           el.addEventListener("mouseenter", () => {
@@ -1008,7 +840,6 @@
           });
         } else {
           const sections = document.querySelectorAll(".page-section");
-          // 加上一些 offset 避免滾動位置不精準
           sections[index].scrollIntoView({ behavior: "smooth" });
         }
       }
@@ -1021,7 +852,6 @@
         if (window.innerWidth > 900) {
           currentIndex = Math.round(window.scrollX / window.innerWidth);
         } else {
-          // 手機版根據各區塊相對於視窗的位置來判定當前索引
           const sections = document.querySelectorAll(".page-section");
           sections.forEach((sec, idx) => {
             const rect = sec.getBoundingClientRect();
